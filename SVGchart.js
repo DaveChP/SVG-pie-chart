@@ -6,6 +6,9 @@ class SVGchart {
     this.SVGheight = chartWidth; // aspect ratio must be 1;
     this.ID = this.createUniqueID();
     this.parentExists(containerElementId);
+    this.categoryLabel = "";
+    this.valueLabel = "";
+    this.valueTotal = 0;
   } // end constructor;
 
   parentExists = function(id) {
@@ -17,11 +20,17 @@ class SVGchart {
     } // end if/else block;
   } // end parentExists method;
 
-  draw = function() {
+  draw = function(data) {
   const svg = this.createSVGelement()
   console.log(`svg element created`);
   console.log(svg);
   console.log(this.ID);
+  console.log(data);
+  // append elements to data array inner arrays to add derived data;
+  this.process(data);
+  console.log("data after processing:", data)
+  console.log(`extracted values ${this.categoryLabel} and ${this.valueLabel}`);
+  console.log(`value total: ${this.valueTotal}`);
   } // end draw function;
 
 
@@ -51,6 +60,22 @@ createUniqueID(){
 return new Date().getTime().toString(36);
 
 } // end createUniqueID method;
+
+process(data) {
+// function mutates argument array at call;
+
+// extract labels from index 0 and remove;
+this.categoryLabel = data[0][0];
+this.valueLabel = data.shift()[1];
+// set total by summing element[1] of all inner elements;
+this.valueTotal = data.map(element => element[1]).reduce((a,b)=> a + b);
+// add element containing radian sweep for each value;
+  data.forEach((element, index) =>{
+  element.push(element[1]*2*Math.PI/this.valueTotal);
+
+  }); // end data.forEach new element;
+}
+
 
 
 } // end svg class;
