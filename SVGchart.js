@@ -4,6 +4,7 @@ class SVGchart {
     this.target = document.getElementById(containerElementId);
     this.SVGwidth = chartWidth;
     this.SVGheight = chartWidth; // aspect ratio must be 1;
+    this.chartRadius = chartWidth/2;
     this.ID = this.createUniqueID();
     this.parentExists(containerElementId);
     this.svg = this.createSVGelement();
@@ -12,7 +13,9 @@ class SVGchart {
     this.valueTotal = 0;
     this.title = "";
     this.sortFlag = 0;
-    this.startOffset = -Math.PI/2;
+    this.startOffset = Math.PI/2;
+    this.colors = ["blue", "red", "green", "yellow", "violet", "magenta", "lime", "orange", "skyblue", "deeppink", "olive", "brown", "indigo", "fuchsia"];
+
 
   } // end constructor;
 
@@ -31,20 +34,23 @@ class SVGchart {
   console.log(this.ID);
   console.log(data);
 
+  this.parsePrefs(prefs);
+
   /* operations on data array */
   this.setDataLabels(data);
   this.setValueTotal(data);
   this.appendAngularProportions(data);
-  //this.orderData(data);
+  this.orderData(data);
+  this.addCoordinates(data);
+  this.addPathDefinitions(data);
+  this.assembleSVG(data);
   /* data array mutations complete */
 
   console.log("data after processing:", data)
   console.log(`extracted values ${this.categoryLabel} and ${this.valueLabel}`);
   console.log(`value total: ${this.valueTotal}`);
-
-  this.parsePrefs(prefs);
   console.log(`chart title: ${this.title}, sort flag: ${this.sortFlag}, offset flag: ${this.startOffset}`);
-  this.orderData(data);
+  console.log(this.colors);
   } // end draw function;
 
 
@@ -97,18 +103,57 @@ appendAngularProportions(data) {
 } // end appendAngularProportions(data);
 
 parsePrefs(prefs) {
-// object argument sent from user call via draw();
+// prefs is object argument sent from user call via draw();
 this.title = prefs.title  ? prefs.title : "" ;
 this.sortFlag = Number.isInteger(parseInt(prefs.sort)) ? parseInt(prefs.sort) : 0;
-this.startOffset = Number.isInteger(parseInt(prefs.degreesOffsetFromTop)) ?  ((2*Math.PI*prefs.degreesOffsetFromTop/360)-Math.PI/2)%(2*Math.PI) : -Math.PI/2;
+this.startOffset = Number.isInteger(parseInt(prefs.degreesOffsetFromTop)) ?  ((-2*Math.PI*prefs.degreesOffsetFromTop/360)+Math.PI/2)%(2*Math.PI) : Math.PI/2;
+// this.startOffset = Number.isInteger(parseInt(prefs.degreesOffsetFromTop)) ?  ((2*Math.PI*prefs.degreesOffsetFromTop/360)-Math.PI/2)%(2*Math.PI) : -Math.PI/2;
 } // end parsePrefs method;
 
 orderData(data) {
-// mutates data array
+// mutates data array. Call only after parsePrefs has executed to reset sortFlag if user sent flag;
 // order according to user flag assigned to global sortFlag;
 if (this.sortFlag != 0) data.sort((a,b) => b[2]-a[2]);
 if (this.sortFlag < 0) data.reverse();
 } // end orderData method;
+
+addCoordinates(data) {
+// adds an element to each inner array containing an object with x and y properties set to Cartesian coordinates of
+// points on the circle circumference representing the start and end positions of segments
+// the first segment begins at the offset position and extends to the radian sweep held in element [2]
+// note radius, cx and cy are all equal to this.chartRadius;
+let radius = this.chartRadius;
+let cx = this.chartRadius;
+let cy = this.chartRadius;
+let offset = this.startOffset;
+
+  data.forEach(element => {
+    element.push({
+      x1: cx+radius*Math.cos(offset),
+      y1: cy-radius*Math.sin(offset),
+      x2: cx+radius*Math.cos(offset-element[2]),
+      y2: cy-radius*Math.sin(offset-element[2])
+      });
+    offset += element[2];
+  }) // next element;
+} // end addCoordinates method;
+
+addPathDefinitions(data) {
+// adds an element to each data inner array containing a string path definition for the segment;
+let radius = this.chartRadius;
+let cx = this.chartRadius;
+let cy = this.chartRadius;
+let arcFlag = 0;
+
+  data.forEach(element => {
+    arcFlag = element[2] <= Math.PI ? "0" : "1";
+    element.push(`M ${cx} ${cy} L ${element[3].x1} ${element[3].y1} A ${radius} ${radius} 0 ${arcFlag} 0 ${element[3].x2} ${element[3].y2} L ${cx} ${cy}`);
+  }); // next element;
+} // end addPathDefinitions method;
+
+assembleSVG(data) {
+
+} // end assembleSVG method;
 
 
 } // end svg class;

@@ -16,7 +16,7 @@ window.onload = function() {
     ["other", 230]
    ];
 
-const options = {title:'Living Costs', degreesOffsetFromTop:-90, sort:-2 };
+const options = {title:'Living Costs', degreesOffsetFromTop:0, sort:-2 };
 
   chart.draw(data,options);
 
