@@ -40,7 +40,7 @@ The method uses an epoch time stamp as a unique starting point. By converting th
 
 ##The draw Method##
 
-The draw method will be called by the user after the object is created and parameters (which will form arguments to the draw call) are set. `draw()` will execute sequential methods to create and render a chart according to the passed arguments.
+The draw method will be called by the user after the object is created and parameters (which will form arguments to the draw call) are set in the calling script. `draw()` will execute sequential methods to render a chart according to the passed arguments.
 
 ###data Argument of draw Method###
 
@@ -60,18 +60,19 @@ The first argument of the `draw` method is a data array defined by the user with
    ];
 ```
 
-###process Method, Helper Function for draw Method###
-On receipt of the `data` array, the `draw` method passes a reference to the array to a helper method named `process`.
+###Methods Applied to the data Array###
+On receipt of the `data` array, the `draw` method sequentially passes a reference to the array to several helper methods, each with a defined task, listed below.
 
-The `process` helper method performs the following tasks:
+ - ####setDataLabels(data)####
+Global variables `categoryLabel` and `valueLabel` are assigned values extracted from the first element of the data array. Element [0] (the header) is removed from the array, leaving just paired data. **note** Element [0] of the data array will be removed from the data array regardless of whether it contained header information or not. The remaining data will be plotted as normal but will result in the first intended data pair being absent from the chart, if the no header was included in the data array argument.
 
- - Global variable `categoryLabel` and `valueLabel` are assigned values from the first element of the data.
- - Data element [0] (the header) is removed from the array, leaving just paired dataarray<sup>1</sup>.
- - Global variable `valueTotal` is calculated by summing the second element of all the inner arrays.
- - Each inner array is appended with a new element containing a proportion value calculated for the value in element[1] as a proportion of a full circle sweep(in radians)<sup>2</sup>.
+ - ####setValueTotal(data)####
+Global variable `valueTotal` is calculated by summing the second element of all the inner arrays. The data array is unchanged by this operations.
 
-**notes**
- 1 Element [0] will be removed from the data array regardless of whether it contained header information or not. This will cause the remaining data to be plotted as normal but will result in the first intended data pair being absent from the chart.
- 2 Specifically, the radian value added to each inner array is the radian sweep for the required chart sector.
+ - ####appendAngularProportions(data)####
+Each inner array of the data array is appended with a new element containing a radian value equivalent to a circle arc fraction equivalent to the fraction of the original value to the total. 
+
+
+
 
 
