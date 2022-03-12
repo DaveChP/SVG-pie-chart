@@ -10,6 +10,10 @@ class SVGchart {
     this.categoryLabel = "";
     this.valueLabel = "";
     this.valueTotal = 0;
+    this.title = "";
+    this.sortFlag = 0;
+    this.startOffset = 0;
+
   } // end constructor;
 
   parentExists = function(id) {
@@ -21,7 +25,7 @@ class SVGchart {
     } // end if/else block;
   } // end parentExists method;
 
-  draw = function(data) {
+  draw = function(data,prefs) {
   console.log(`svg element created`);
   console.log(this.svg);
   console.log(this.ID);
@@ -36,6 +40,9 @@ class SVGchart {
   console.log("data after processing:", data)
   console.log(`extracted values ${this.categoryLabel} and ${this.valueLabel}`);
   console.log(`value total: ${this.valueTotal}`);
+
+  this.parsePrefs(prefs);
+  console.log(`chart title: ${this.title}, sort flag: ${this.sortFlag}, offset flag: ${this.startOffset}`);
 
   } // end draw function;
 
@@ -87,6 +94,15 @@ appendAngularProportions(data) {
   element.push(element[1]*2*Math.PI/this.valueTotal);
   }); // end data.forEach new element;
 } // end appendAngularProportions(data);
+
+parsePrefs(prefs) {
+// object argument sent from user call via draw();
+prefs.title  ? this.title = prefs.title : 0 ;
+prefs.sort ? this.sortFlag = prefs.sort : 0;
+prefs.degreesOffsetFromTop ? this.startOffset = ((2*Math.PI*prefs.degreesOffsetFromTop/360)-Math.PI/2)%(2*Math.PI) : -Math.PI/2;
+
+
+} // end parsePrefs method;
 
 
 

@@ -72,7 +72,21 @@ Global variable `valueTotal` is calculated by summing the second element of all 
  - ####appendAngularProportions(data)####
 Each inner array of the data array is appended with a new element containing a radian value equivalent to a circle arc fraction equivalent to the fraction of the original value to the total. 
 
+###preferences Argument of draw Method###
 
+The second argument of the `draw` method is an object defined by the user with their preference data. All items are optional and they can be placed in any order. Key names must match those available, which user notes should specify and define. E.g.:
 
+```
+title: "quotted string"
+sort: number (0,1,-1 specifying no sort, sort asscending, sort descending for the data)
+degreesOffsetFromTop: (number 0 to +/- 360, where the first slice starts on chart)
+(add here as new features developed)
+```
+**note** The degrees offset set by the user is relative to the top of the pie chart (i.e. the 12 o'clock position, and not the x-axis (3 o'clock) as sometimes used. 
 
+Each item must be separated by comma, with no trailing comma. 
 
+####parsePrefs Method ####
+The draw method delegates parsing of the user preferences to the helper method `parsePrefs`. A series of ternary operator conditionals scans the passed `prefs` object for expected keys and assigns their values to the relevant global properties initialised by the `constructor` method.
+
+In the case of the `degreesOffsetFromTop` preference, `parsePrefs` processes the passed value to finally assign a radian value relative to the x-axis rather than the top. The default value, assigned to the global `startOffset` if 0 or no value is passed by the user, is -Pi/2 radians (the top of the chart). The assignment statement also takes care of out of range and negative values by applying remainder division by 2Pi after converting the passed degrees to radians and subtracting the quarter circle. 
