@@ -71,6 +71,8 @@ Global variable `valueTotal` is calculated by summing the second element of all 
 
  - ####appendAngularProportions(data)####
 Each inner array of the data array is appended with a new element containing a radian value equivalent to a circle arc fraction equivalent to the fraction of the original value to the total. 
+ - ####orderData(data) ####
+The `parsePrefs` method (below) scans user preferences for a sort flag and, if present assigns it to the global sortFlag variable. The default value, set by the constructor is 0, and results in the data being plotted in the order it was passed in. Any numerical value can be sent in the user preference object (including 0, numeric strings (like "90"), and decimals). The `parsePrefs` method confirms the default if a number cannot be extracted. The `orderData` method examines the value of the global sortFlag, sorting high to low is a positive value was found, sorting low to high for a negative value, or leaving the data array in its original order if zero was found.
 
 ###preferences Argument of draw Method###
 
@@ -78,7 +80,7 @@ The second argument of the `draw` method is an object defined by the user with t
 
 ```
 title: "quotted string"
-sort: number (0,1,-1 specifying no sort, sort asscending, sort descending for the data)
+sort: number (0,<0,>0 specifying no sort, sort ascending, sort descending for the data)
 degreesOffsetFromTop: (number 0 to +/- 360, where the first slice starts on chart)
 (add here as new features developed)
 ```
@@ -89,4 +91,4 @@ Each item must be separated by comma, with no trailing comma.
 ####parsePrefs Method ####
 The draw method delegates parsing of the user preferences to the helper method `parsePrefs`. A series of ternary operator conditionals scans the passed `prefs` object for expected keys and assigns their values to the relevant global properties initialised by the `constructor` method.
 
-In the case of the `degreesOffsetFromTop` preference, `parsePrefs` processes the passed value to finally assign a radian value relative to the x-axis rather than the top. The default value, assigned to the global `startOffset` if 0 or no value is passed by the user, is -Pi/2 radians (the top of the chart). The assignment statement also takes care of out of range and negative values by applying remainder division by 2Pi after converting the passed degrees to radians and subtracting the quarter circle. 
+In the case of the `degreesOffsetFromTop` preference, `parsePrefs` processes the passed value to finally assign a radian value relative to the x-axis rather than the top. The default value, assigned to the global `startOffset`, if 0 or no value is passed by the user, is -Pi/2 radians (the top of the chart). The assignment statement also takes care of out of range and negative values by applying remainder division by 2Pi after converting the passed degrees to radians and subtracting the quarter circle. Numbers sent as strings will be parsed to integers. Non numeric strings are ignored and the default is set to -Pi/2. 

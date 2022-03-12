@@ -12,7 +12,7 @@ class SVGchart {
     this.valueTotal = 0;
     this.title = "";
     this.sortFlag = 0;
-    this.startOffset = 0;
+    this.startOffset = -Math.PI/2;
 
   } // end constructor;
 
@@ -25,7 +25,7 @@ class SVGchart {
     } // end if/else block;
   } // end parentExists method;
 
-  draw = function(data,prefs) {
+  draw = function(data,prefs={},) {
   console.log(`svg element created`);
   console.log(this.svg);
   console.log(this.ID);
@@ -35,6 +35,7 @@ class SVGchart {
   this.setDataLabels(data);
   this.setValueTotal(data);
   this.appendAngularProportions(data);
+  //this.orderData(data);
   /* data array mutations complete */
 
   console.log("data after processing:", data)
@@ -43,7 +44,7 @@ class SVGchart {
 
   this.parsePrefs(prefs);
   console.log(`chart title: ${this.title}, sort flag: ${this.sortFlag}, offset flag: ${this.startOffset}`);
-
+  this.orderData(data);
   } // end draw function;
 
 
@@ -97,13 +98,17 @@ appendAngularProportions(data) {
 
 parsePrefs(prefs) {
 // object argument sent from user call via draw();
-prefs.title  ? this.title = prefs.title : 0 ;
-prefs.sort ? this.sortFlag = prefs.sort : 0;
-prefs.degreesOffsetFromTop ? this.startOffset = ((2*Math.PI*prefs.degreesOffsetFromTop/360)-Math.PI/2)%(2*Math.PI) : -Math.PI/2;
-
-
+this.title = prefs.title  ? prefs.title : "" ;
+this.sortFlag = Number.isInteger(parseInt(prefs.sort)) ? parseInt(prefs.sort) : 0;
+this.startOffset = Number.isInteger(parseInt(prefs.degreesOffsetFromTop)) ?  ((2*Math.PI*prefs.degreesOffsetFromTop/360)-Math.PI/2)%(2*Math.PI) : -Math.PI/2;
 } // end parsePrefs method;
 
+orderData(data) {
+// mutates data array
+// order according to user flag assigned to global sortFlag;
+if (this.sortFlag != 0) data.sort((a,b) => b[2]-a[2]);
+if (this.sortFlag < 0) data.reverse();
+} // end orderData method;
 
 
 } // end svg class;
