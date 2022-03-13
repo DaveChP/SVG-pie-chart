@@ -15,6 +15,7 @@ class SVGchart {
     this.sortFlag = 0;
     this.startOffset = Math.PI/2;
     this.colors = ["blue", "red", "green", "yellow", "violet", "magenta", "lime", "orange", "skyblue", "deeppink", "olive", "brown", "indigo", "fuchsia"];
+    // [];
 
 
   } // end constructor;
@@ -51,20 +52,24 @@ class SVGchart {
   console.log(`value total: ${this.valueTotal}`);
   console.log(`chart title: ${this.title}, sort flag: ${this.sortFlag}, offset flag: ${this.startOffset}`);
   console.log(this.colors);
+  console.log(this.svg)
+
+  this.target.appendChild(this.svg)
   } // end draw function;
 
 
 createSVGelement() {
 // returns empty svg element object;
-// complete with attributes to specify a square image sized to user units 100x100;
+// complete with attributes to specify a square image sized to user units 500x500;
 // equivalent to (html): <svg version="1.1" width="1000" height="1000" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>; 
 
-const svgElement = document.createElement('svg');
+const svgElement = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
+// const svgElement = document.createElement('svg');
 svgElement.setAttribute("id", this.ID);
 svgElement.setAttribute("version", "1.1");
 svgElement.setAttribute("width", this.SVGwidth);
 svgElement.setAttribute("height", this.SVGheight); // aspect ratio=1 set in constructor;
-svgElement.setAttribute("viewBox", "0 0 100 100");
+svgElement.setAttribute("viewBox", "0 0 500 500");
 svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
 return svgElement; // object;
@@ -134,7 +139,7 @@ let offset = this.startOffset;
       x2: cx+radius*Math.cos(offset-element[2]),
       y2: cy-radius*Math.sin(offset-element[2])
       });
-    offset += element[2];
+    offset -= element[2];
   }) // next element;
 } // end addCoordinates method;
 
@@ -147,13 +152,25 @@ let arcFlag = 0;
 
   data.forEach(element => {
     arcFlag = element[2] <= Math.PI ? "0" : "1";
-    element.push(`M ${cx} ${cy} L ${element[3].x1} ${element[3].y1} A ${radius} ${radius} 0 ${arcFlag} 0 ${element[3].x2} ${element[3].y2} L ${cx} ${cy}`);
+    element.push(`M ${cx} ${cy} L ${element[3].x1} ${element[3].y1} A ${radius} ${radius} 0 ${arcFlag} 1 ${element[3].x2} ${element[3].y2} L ${cx} ${cy}`);
   }); // next element;
 } // end addPathDefinitions method;
 
 assembleSVG(data) {
 
+  data.forEach((element, index) => {
+  const pathElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+  //const pathElement = document.createElement('path');
+  pathElement.setAttribute("id", `${element[0].replace(/ /g, '-')}-${index}`);
+  pathElement.setAttribute("fill", this.colors[index%this.colors.length]);
+  pathElement.setAttribute("stroke", "black"); 
+  pathElement.setAttribute("fill-rule", "evenodd"); 
+  pathElement.setAttribute("d", element[4]);
+  this.svg.appendChild(pathElement);  
+  });
 } // end assembleSVG method;
+
+
 
 
 } // end svg class;
