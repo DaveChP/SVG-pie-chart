@@ -14,8 +14,7 @@ class SVGchart {
     this.title = "";
     this.sortFlag = 0;
     this.startOffset = Math.PI/2;
-    this.colors = ["blue", "red", "green", "yellow", "violet", "magenta", "lime", "orange", "skyblue", "deeppink", "olive", "brown", "indigo", "fuchsia"];
-    // [];
+    this.colors = ['#3366cc', '#dc3912', '#ff9900', '#109618', '#990099', '#0099c6', '#dd4477', '#66aa00', '#b8,2e2e', '#316395', '#994499', '#22aa99', '#aaaa11', '#6633cc', '#e67300', '#8b0707', '#651067', '#329262', '#5574ab', '#3b3eac', '#b77322'];
 
 
   } // end constructor;
@@ -69,7 +68,7 @@ svgElement.setAttribute("id", this.ID);
 svgElement.setAttribute("version", "1.1");
 svgElement.setAttribute("width", this.SVGwidth);
 svgElement.setAttribute("height", this.SVGheight); // aspect ratio=1 set in constructor;
-svgElement.setAttribute("viewBox", "0 0 500 500");
+svgElement.setAttribute("viewBox", `0 0 ${this.SVGwidth} ${this.SVGheight}`);
 svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
 return svgElement; // object;
@@ -112,7 +111,10 @@ parsePrefs(prefs) {
 this.title = prefs.title  ? prefs.title : "" ;
 this.sortFlag = Number.isInteger(parseInt(prefs.sort)) ? parseInt(prefs.sort) : 0;
 this.startOffset = Number.isInteger(parseInt(prefs.degreesOffsetFromTop)) ?  ((-2*Math.PI*prefs.degreesOffsetFromTop/360)+Math.PI/2)%(2*Math.PI) : Math.PI/2;
-// this.startOffset = Number.isInteger(parseInt(prefs.degreesOffsetFromTop)) ?  ((2*Math.PI*prefs.degreesOffsetFromTop/360)-Math.PI/2)%(2*Math.PI) : -Math.PI/2;
+
+if (Array.isArray(prefs.colors)) this.colors = prefs.colors;
+console.log(`color preference array check: ${Array.isArray(prefs.colors)}`)
+
 } // end parsePrefs method;
 
 orderData(data) {
@@ -164,7 +166,7 @@ assembleSVG(data) {
   pathElement.setAttribute("id", `${element[0].replace(/ /g, '-')}-${index}`);
   pathElement.setAttribute("fill", this.colors[index%this.colors.length]);
   pathElement.setAttribute("stroke", "black"); 
-  pathElement.setAttribute("fill-rule", "evenodd"); 
+  // pathElement.setAttribute("fill-rule", "evenodd"); 
   pathElement.setAttribute("d", element[4]);
   this.svg.appendChild(pathElement);  
   });
