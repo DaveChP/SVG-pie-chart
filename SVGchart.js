@@ -8,7 +8,7 @@ class SVGchart {
     this.viewBoxHeight = 100;
     this.chartRadius = this.viewBoxHeight/2-1; // allow for circumference line;
     this.chartCentre = {x: this.viewBoxHeight/2, y: (this.viewBoxHeight/2)};
-    this.strokeWidth = this.setStrokeWidth();
+    this.strokeWidth = "0.2px"; //this.setStrokeWidth();
     this.ID = this.createUniqueID();
     this.parentExists(containerElementId);
     this.svg = this.createSVGelement();
@@ -32,9 +32,11 @@ class SVGchart {
     } // end if/else block;
   } // end parentExists method;
 
+/* setStrokeWidth possibly redundant
   setStrokeWidth = function() {
-  return (this.viewBoxheight < this.svgHeight) ? (this.viewBoxHeight/this.SVGheight)/2 : (this.SVGheight/this.viewBoxHeight)/2   
+  return (this.viewBoxheight < this.svgHeight) ? `${this.viewBoxHeight/this.SVGheight/5}px` : `${this.SVGheight/this.viewBoxHeight/5}px`   
   }
+*/
 
   draw = function(data,prefs={},) {
   console.log(`svg element created`);

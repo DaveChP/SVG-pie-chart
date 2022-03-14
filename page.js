@@ -2,7 +2,7 @@
 window.onload = function() {
 
 // create new chart object
-  const chart = new SVGchart('chart-container', 50);
+  const chart = new SVGchart('chart-container', 100);
 // build array of category/value arrays;
   const data = [
     ["category", "cost"],
