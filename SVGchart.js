@@ -6,8 +6,10 @@ class SVGchart {
     this.SVGheight = chartHeight;
     this.viewBoxWidth = parseInt(100*this.SVGwidth/this.SVGheight);
     this.viewBoxHeight = 100;
-    this.chartRadius = this.viewBoxHeight/2-1; // allow for circumference line;
-    this.chartCentre = {x: this.viewBoxHeight/2, y: (this.viewBoxHeight/2)};
+
+    this.chartRadius = 0;
+    this.chartPosition = {}; // xy coordinates of chart circle centre;
+
     this.strokeWidth = "0.2px"; //this.setStrokeWidth();
     this.ID = this.createUniqueID();
     this.parentExists(containerElementId);
@@ -45,6 +47,10 @@ class SVGchart {
   console.log(data);
 
   this.parsePrefs(prefs);
+  
+  this.setRadius();
+  this.setPosition();
+  this.assembleTitleSVG();
 
   /* operations on data array */
   this.setDataLabels(data);
@@ -53,7 +59,7 @@ class SVGchart {
   this.orderData(data);
   this.addCoordinates(data);
   this.addPathDefinitions(data);
-  this.assembleSVG(data);
+  this.assembleChartSVG(data);
   /* data array mutations complete */
 
   console.log("data after processing:", data)
@@ -127,6 +133,19 @@ console.log(`color preference array check: ${Array.isArray(prefs.colors)}`)
 
 } // end parsePrefs method;
 
+setRadius() {
+  if (this.title.length>0) {
+    this.chartRadius = this.viewBoxHeight*0.43; // allow space for title and border;
+  } else {
+    this.chartRadius = this.viewBoxHeight/2 -1; // allow space for border;
+  } // end if;
+} // end setRadius method;
+
+setPosition() {
+// centre coordinates for circle;
+  this.chartPosition = {x: this.chartRadius +1 , y: (this.viewBoxHeight - this.chartRadius -1)};
+} // end setPosition method;
+
 orderData(data) {
 // mutates data array. Call only after parsePrefs has executed to reset sortFlag if user sent flag;
 // order according to user flag assigned to global sortFlag;
@@ -140,8 +159,8 @@ addCoordinates(data) {
 // the first segment begins at the offset position and extends to the radian sweep held in element [2]
 
 let radius = this.chartRadius;
-let cx = this.chartCentre.x;
-let cy = this.chartCentre.y;
+let cx = this.chartPosition.x;
+let cy = this.chartPosition.y;
 let offset = this.startOffset;
 
   data.forEach(element => {
@@ -158,8 +177,8 @@ let offset = this.startOffset;
 addPathDefinitions(data) {
 // adds an element to each data inner array containing a string path definition for the segment;
 let radius = this.chartRadius;
-let cx = this.chartCentre.x;
-let cy = this.chartCentre.y;
+let cx = this.chartPosition.x;
+let cy = this.chartPosition.y;
 let arcFlag = 0;
 
   data.forEach(element => {
@@ -168,7 +187,24 @@ let arcFlag = 0;
   }); // next element;
 } // end addPathDefinitions method;
 
-assembleSVG(data) {
+assembleTitleSVG() {
+  if (this.title.length>0) {
+//<text x="0" y="50" font-family="Verdana" font-size="35" fill="blue">Hello</text>;
+    const lineHeight = this.viewBoxHeight*0.07 ; 
+    const titleTextElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+    titleTextElement.setAttribute("x", "1");
+    titleTextElement.setAttribute("y", lineHeight);
+    titleTextElement.setAttribute("id", "title-text");
+    titleTextElement.setAttribute("font-family", "Arial");
+    titleTextElement.setAttribute("font-size", lineHeight);
+    titleTextElement.setAttribute("fill", "black");
+    titleTextElement.setAttribute("font-weight", "normal");
+    titleTextElement.innerHTML = this.title;
+    this.svg.appendChild(titleTextElement);
+  } // end if;
+} // end assembleTitleSVG method;
+
+assembleChartSVG(data) {
 
   data.forEach((element, index) => {
   const pathElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
@@ -181,7 +217,7 @@ assembleSVG(data) {
   pathElement.setAttribute("d", element[4]);
   this.svg.appendChild(pathElement);  
   });
-} // end assembleSVG method;
+} // end assembleChartSVG method;
 
 
 

@@ -2,7 +2,7 @@
 window.onload = function() {
 
 // create new chart object
-  const chart = new SVGchart('chart-container', 100);
+  const chart = new SVGchart('chart-container', 150, 150);
 // build array of category/value arrays;
   const data = [
     ["category", "cost"],
@@ -18,7 +18,7 @@ window.onload = function() {
 
 const colors = ["orange", "pink", "brown", "blue", "red"];
 
-const options = {title:'Living Costs', degreesOffsetFromTop:0, sort:0, colors: false};
+const options = {title:"My Living Costs", degreesOffsetFromTop:0, sort:0, colors: false};
 
   chart.draw(data,options);
 
