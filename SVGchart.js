@@ -1,10 +1,14 @@
 class SVGchart {
 
-  constructor(containerElementId, chartWidth) {
+  constructor(containerElementId, chartWidth, chartHeight=(0.6*chartWidth)) {
     this.target = document.getElementById(containerElementId);
     this.SVGwidth = chartWidth;
-    this.SVGheight = chartWidth; // aspect ratio must be 1;
-    this.chartRadius = chartWidth/2;
+    this.SVGheight = chartHeight;
+    this.viewBoxWidth = parseInt(100*this.SVGwidth/this.SVGheight);
+    this.viewBoxHeight = 100;
+    this.chartRadius = this.viewBoxHeight/2-1; // allow for circumference line;
+    this.chartCentre = {x: this.viewBoxHeight/2, y: (this.viewBoxHeight/2)};
+    this.strokeWidth = (this.viewBoxHeight/this.SVGheight)/2;
     this.ID = this.createUniqueID();
     this.parentExists(containerElementId);
     this.svg = this.createSVGelement();
@@ -68,7 +72,7 @@ svgElement.setAttribute("id", this.ID);
 svgElement.setAttribute("version", "1.1");
 svgElement.setAttribute("width", this.SVGwidth);
 svgElement.setAttribute("height", this.SVGheight); // aspect ratio=1 set in constructor;
-svgElement.setAttribute("viewBox", `0 0 ${this.SVGwidth} ${this.SVGheight}`);
+svgElement.setAttribute("viewBox", `0 0 ${this.viewBoxWidth} ${this.viewBoxHeight}`);
 svgElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
 
 return svgElement; // object;
@@ -128,10 +132,10 @@ addCoordinates(data) {
 // adds an element to each inner array containing an object with x and y properties set to Cartesian coordinates of
 // points on the circle circumference representing the start and end positions of segments
 // the first segment begins at the offset position and extends to the radian sweep held in element [2]
-// note radius, cx and cy are all equal to this.chartRadius;
+
 let radius = this.chartRadius;
-let cx = this.chartRadius;
-let cy = this.chartRadius;
+let cx = this.chartCentre.x;
+let cy = this.chartCentre.y;
 let offset = this.startOffset;
 
   data.forEach(element => {
@@ -148,8 +152,8 @@ let offset = this.startOffset;
 addPathDefinitions(data) {
 // adds an element to each data inner array containing a string path definition for the segment;
 let radius = this.chartRadius;
-let cx = this.chartRadius;
-let cy = this.chartRadius;
+let cx = this.chartCentre.x;
+let cy = this.chartCentre.y;
 let arcFlag = 0;
 
   data.forEach(element => {
@@ -165,7 +169,8 @@ assembleSVG(data) {
   //const pathElement = document.createElement('path');
   pathElement.setAttribute("id", `${element[0].replace(/ /g, '-')}-${index}`);
   pathElement.setAttribute("fill", this.colors[index%this.colors.length]);
-  pathElement.setAttribute("stroke", "black"); 
+  pathElement.setAttribute("stroke", "black");
+  pathElement.setAttribute("stroke-width", this.strokeWidth); 
   // pathElement.setAttribute("fill-rule", "evenodd"); 
   pathElement.setAttribute("d", element[4]);
   this.svg.appendChild(pathElement);  
