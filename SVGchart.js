@@ -8,7 +8,7 @@ class SVGchart {
     this.viewBoxHeight = 100;
     this.chartRadius = this.viewBoxHeight/2-1; // allow for circumference line;
     this.chartCentre = {x: this.viewBoxHeight/2, y: (this.viewBoxHeight/2)};
-    this.strokeWidth = (this.viewBoxHeight/this.SVGheight)/2;
+    this.strokeWidth = this.setStrokeWidth();
     this.ID = this.createUniqueID();
     this.parentExists(containerElementId);
     this.svg = this.createSVGelement();
@@ -31,6 +31,10 @@ class SVGchart {
       console.log(`Error: SVGhart object requires an existing parent element ID to instantiate. No element with ID ${id} was found in the html`);
     } // end if/else block;
   } // end parentExists method;
+
+  setStrokeWidth = function() {
+  return (this.viewBoxheight < this.svgHeight) ? (this.viewBoxHeight/this.SVGheight)/2 : (this.SVGheight/this.viewBoxHeight)/2   
+  }
 
   draw = function(data,prefs={},) {
   console.log(`svg element created`);
@@ -170,7 +174,7 @@ assembleSVG(data) {
   pathElement.setAttribute("id", `${element[0].replace(/ /g, '-')}-${index}`);
   pathElement.setAttribute("fill", this.colors[index%this.colors.length]);
   pathElement.setAttribute("stroke", "black");
-  pathElement.setAttribute("stroke-width", this.strokeWidth); 
+  pathElement.setAttribute("stroke-width", this.strokeWidth); // 
   // pathElement.setAttribute("fill-rule", "evenodd"); 
   pathElement.setAttribute("d", element[4]);
   this.svg.appendChild(pathElement);  
