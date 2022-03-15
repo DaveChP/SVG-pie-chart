@@ -1,6 +1,6 @@
 class SVGchart {
 
-  constructor(containerElementId, chartWidth, chartHeight=(0.55*chartWidth)) {
+  constructor(containerElementId, chartWidth=100, chartHeight=parseInt(0.7*chartWidth)) {
     this.target = document.getElementById(containerElementId);
     this.SVGwidth = chartWidth;
     this.SVGheight = chartHeight;
@@ -60,7 +60,6 @@ class SVGchart {
   this.setLegendTopLine();
 
   /* operations on data array */
-  this.assembleLegendSVG(data);
   this.setDataLabels(data);
   this.setValueTotal(data);
   this.appendAngularProportions(data);
@@ -68,6 +67,7 @@ class SVGchart {
   this.addCoordinates(data);
   this.addPathDefinitions(data);
   this.assembleChartSVG(data);
+  this.assembleLegendSVG(data);
   /* data array mutations complete */
 
   //console.log("data after processing:", data)
@@ -204,7 +204,9 @@ assembleLegendSVG(data) {
   console.log(`legend line height: ${this.legendLineHeight}`);
   if (this.legendFlag == "standard") {
     const legendGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g');
-    const boxSize = 5;
+    const boxSize = 4.5;
+    legendGroup.setAttribute("id", "legend-group");
+
     const strokeWidth = "0.2px";
     let currentLineY = this.legendTopLine;
 
@@ -223,7 +225,7 @@ assembleLegendSVG(data) {
     const legendLineText = document.createElementNS("http://www.w3.org/2000/svg", 'text'); 
     legendLineText.setAttribute("x", this.legendLeft+boxSize + 10);
     legendLineText.setAttribute("y", currentLineY);
-    legendLineText.setAttribute("font-size", this.legendLineHeight-2);
+    legendLineText.setAttribute("font-size", this.legendLineHeight-2.5);
     legendLineText.setAttribute("font-family", "Arial");
     legendLineText.setAttribute("fill", "black");
     legendLineText.setAttribute("font-weight", "normal");
@@ -243,7 +245,7 @@ assembleLegendSVG(data) {
 assembleTitleSVG() {
   if (this.title.length>0) {
 //<text x="0" y="50" font-family="Verdana" font-size="35" fill="blue">Hello</text>;
-    const lineHeight = parseInt(this.viewBoxHeight*0.07) ; 
+    const lineHeight = parseInt(this.viewBoxHeight*0.065) ; 
     const titleTextElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
 
     titleTextElement.setAttribute("y", lineHeight);
@@ -277,7 +279,7 @@ setLegendLeft() {
 } // end setLegendLeft method;
 
 setLegendLineHeight() {
-  this.legendLineHeight = parseInt(this.chartRadius/5); // 10 lines down circle diameter;
+  this.legendLineHeight = parseInt(this.chartRadius/5.5); // 11 lines down circle diameter;
 } // end setLegendLineHeight method
 
 setLegendTopLine() {

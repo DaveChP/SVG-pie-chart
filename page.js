@@ -1,29 +1,25 @@
 
-window.onload = function() {
+function plotChart() {
 
-// create new chart object
-  const chart = new SVGchart('chart-container', 200);
-// build array of category/value arrays;
+  const chart = new SVGchart('chart-container');
+
   const data = [
     ["category", "cost"],
-    ["rent", 500],
-    ["local taxes", 100],
-    ["media subs", 70],
-    ["heating", 90],
-    ["electricity", 700],
-    ["food", 200],
-    ["transport", 190],
-    ["other", 230]
+    ["investments", 620],
+    ["taxes", 80],
+    ["staff", 70],
+    ["housing", 400],
+    ["air travel", 470],
+    ["entertainment", 200],
+    ["motoring", 190],
    ];
 
-const colors = ["orange", "pink", "brown", "blue", "red"];
-
-const options = {title:"My Living Costs", degreesOffsetFromTop:0, sort:0};
-//title:"My Living Costs",
-//, legend:"none"
+  const options = {
+    title:"Budget of an International Playboy"
+   }
 
   chart.draw(data,options);
 
+} // plotChart function end;
 
-
-} // windowload wrapper;
+window.onload = plotChart();
