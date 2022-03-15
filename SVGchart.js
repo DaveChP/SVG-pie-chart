@@ -1,6 +1,6 @@
 class SVGchart {
 
-  constructor(containerElementId, chartWidth, chartHeight=(0.6*chartWidth)) {
+  constructor(containerElementId, chartWidth, chartHeight=(0.55*chartWidth)) {
     this.target = document.getElementById(containerElementId);
     this.SVGwidth = chartWidth;
     this.SVGheight = chartHeight;
@@ -18,6 +18,7 @@ class SVGchart {
     this.valueLabel = "";
     this.valueTotal = 0;
     this.title = "";
+    this.legendFlag = false;
     this.sortFlag = 0;
     this.startOffset = Math.PI/2;
     this.colors = ['#3366cc', '#dc3912', '#ff9900', '#109618', '#990099', '#0099c6', '#dd4477', '#66aa00', '#b8,2e2e', '#316395', '#994499', '#22aa99', '#aaaa11', '#6633cc', '#e67300', '#8b0707', '#651067', '#329262', '#5574ab', '#3b3eac', '#b77322'];
@@ -68,7 +69,7 @@ class SVGchart {
   console.log(`chart title: ${this.title}, sort flag: ${this.sortFlag}, offset flag: ${this.startOffset}`);
   console.log(this.colors);
   console.log(this.svg)
-
+  console.log(`legend flag: ${this.legendFlag}`);
   this.target.appendChild(this.svg)
   } // end draw function;
 
@@ -129,8 +130,8 @@ this.sortFlag = Number.isInteger(parseInt(prefs.sort)) ? parseInt(prefs.sort) : 
 this.startOffset = Number.isInteger(parseInt(prefs.degreesOffsetFromTop)) ?  ((-2*Math.PI*prefs.degreesOffsetFromTop/360)+Math.PI/2)%(2*Math.PI) : Math.PI/2;
 
 if (Array.isArray(prefs.colors)) this.colors = prefs.colors;
-console.log(`color preference array check: ${Array.isArray(prefs.colors)}`)
-
+console.log(`color preference array check: ${Array.isArray(prefs.colors)}`);
+this.legendFlag = (prefs.legend)? prefs.legend : "standard";
 } // end parsePrefs method;
 
 setRadius() {
@@ -190,7 +191,7 @@ let arcFlag = 0;
 assembleTitleSVG() {
   if (this.title.length>0) {
 //<text x="0" y="50" font-family="Verdana" font-size="35" fill="blue">Hello</text>;
-    const lineHeight = this.viewBoxHeight*0.07 ; 
+    const lineHeight = parseInt(this.viewBoxHeight*0.07) ; 
     const titleTextElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
     titleTextElement.setAttribute("x", "1");
     titleTextElement.setAttribute("y", lineHeight);
