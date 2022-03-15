@@ -24,7 +24,7 @@ class SVGchart {
     this.legendTopLine = 0;
     this.sortFlag = 0;
     this.startOffset = Math.PI/2;
-    this.colors = ['#3366cc', '#dc3912', '#ff9900', '#109618', '#990099', '#0099c6', '#dd4477', '#66aa00', '#b8,2e2e', '#316395', '#994499', '#22aa99', '#aaaa11', '#6633cc', '#e67300', '#8b0707', '#651067', '#329262', '#5574ab', '#3b3eac', '#b77322'];
+    this.colors = ['#3366cc', '#dc3912', '#ff9900', '#109618', '#990099', '#0099c6', '#dd4477', '#66aa00', '#b82e2e', '#316395', '#994499', '#22aa99', '#aaaa11', '#6633cc', '#e67300', '#8b0707', '#651067', '#329262', '#5574ab', '#3b3eac', '#b77322'];
 
 
   } // end constructor;
@@ -198,18 +198,54 @@ let arcFlag = 0;
   }); // next element;
 } // end addPathDefinitions method;
 
-assembleLegendSVG() {
+assembleLegendSVG(data) {
   console.log(`legend left: ${this.legendLeft}`);
   console.log(`legend top line: ${this.legendTopLine}`);
   console.log(`legend line height: ${this.legendLineHeight}`);
+  if (this.legendFlag == "standard") {
+    const legendGroup = document.createElementNS("http://www.w3.org/2000/svg", 'g');
+    const boxSize = 5;
+    const strokeWidth = "0.2px";
+    let currentLineY = this.legendTopLine;
+
+    data.forEach((element, index) => {
+
+    const legendLineBox = document.createElementNS("http://www.w3.org/2000/svg", 'rect');  
+    legendLineBox.setAttribute("x", this.legendLeft+8);
+    legendLineBox.setAttribute("y", currentLineY-boxSize);
+    legendLineBox.setAttribute("width", boxSize);
+    legendLineBox.setAttribute("height", boxSize);
+    legendLineBox.setAttribute("stroke", "black");
+    legendLineBox.setAttribute("stroke-width", "0.2px");
+    legendLineBox.setAttribute("fill", this.colors[index]);
+    legendGroup.appendChild(legendLineBox);
+
+    const legendLineText = document.createElementNS("http://www.w3.org/2000/svg", 'text'); 
+    legendLineText.setAttribute("x", this.legendLeft+boxSize + 10);
+    legendLineText.setAttribute("y", currentLineY);
+    legendLineText.setAttribute("font-size", this.legendLineHeight-2);
+    legendLineText.setAttribute("font-family", "Arial");
+    legendLineText.setAttribute("fill", "black");
+    legendLineText.setAttribute("font-weight", "normal");
+    legendLineText.innerHTML = element[0];
+    legendGroup.appendChild(legendLineText);
+
+    currentLineY += this.legendLineHeight;
+
+// ((this.legendTopLine-this.legendLineHeight) + (index*this.legendLineHeight))
+
+    }) // next data element;
+  this.svg.appendChild(legendGroup);
+  } // end if flag=standard;
 } // end assembleLegendSVG method;
+
 
 assembleTitleSVG() {
   if (this.title.length>0) {
 //<text x="0" y="50" font-family="Verdana" font-size="35" fill="blue">Hello</text>;
     const lineHeight = parseInt(this.viewBoxHeight*0.07) ; 
     const titleTextElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
-    titleTextElement.setAttribute("x", "1");
+
     titleTextElement.setAttribute("y", lineHeight);
     titleTextElement.setAttribute("id", "title-text");
     titleTextElement.setAttribute("font-family", "Arial");
