@@ -265,11 +265,13 @@ assembleChartSVG(data) {
   const pathElement = document.createElementNS("http://www.w3.org/2000/svg", 'path');
   //const pathElement = document.createElement('path');
   pathElement.setAttribute("id", `${element[0].replace(/ /g, '-')}-${index}`);
+  pathElement.setAttribute("class", "chart-sector");
   pathElement.setAttribute("fill", this.colors[index%this.colors.length]);
   pathElement.setAttribute("stroke", "black");
   pathElement.setAttribute("stroke-width", this.strokeWidth); // 
   // pathElement.setAttribute("fill-rule", "evenodd"); 
   pathElement.setAttribute("d", element[4]);
+  pathElement.innerHTML = `<title>${element[0]} $${element[1]}</title>`;
   this.svg.appendChild(pathElement);  
   });
 } // end assembleChartSVG method;
